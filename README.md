@@ -408,6 +408,6 @@ This project is created for the 8byte DevOps Intern Assignment.
 
 ---
 
-**Author**: [Your Name]  
+**Author**: Aditya Kummar Prasad 
 **Date**: February 2026  
 **Assignment**: 8byte DevOps Intern Technical Assessment
