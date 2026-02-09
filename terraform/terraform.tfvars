@@ -1,5 +1,5 @@
 # AWS Configuration
-aws_region = "us-east-1"
+aws_region = "ap-south-1"
 
 # Project Configuration
 project_name = "8byte-intern-assignment"
