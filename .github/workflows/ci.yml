@@ -1,0 +1,52 @@
+name: CI - Docker Build and Push
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Build Docker image
+        run: |
+          docker build -t 8byte-intern-app .
+      
+      - name: Verify Docker build
+        run: |
+          docker images | grep 8byte-intern-app
+      
+      - name: Test Docker container
+        run: |
+          docker run -d -p 3000:3000 --name test-app 8byte-intern-app
+          sleep 5
+          curl -f http://localhost:3000 || exit 1
+          docker stop test-app
+          docker rm test-app
+      
+      # Bonus: Push to Docker Hub (Optional)
+      - name: Login to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+        continue-on-error: true
+      
+      - name: Push to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker tag 8byte-intern-app ${{ secrets.DOCKER_USERNAME }}/8byte-intern-app:latest
+          docker tag 8byte-intern-app ${{ secrets.DOCKER_USERNAME }}/8byte-intern-app:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/8byte-intern-app:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/8byte-intern-app:${{ github.sha }}
+        continue-on-error: true

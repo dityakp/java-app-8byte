@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+.github
+terraform
+*.md
+.DS_Store
