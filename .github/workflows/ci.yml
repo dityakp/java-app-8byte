@@ -32,3 +32,19 @@ jobs:
           curl -f http://localhost:3000 || exit 1
           docker stop test-app
           docker rm test-app
+      
+      # Push to Docker Hub
+      - name: Login to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Push to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker tag 8byte-intern-app dityakp/8byte-intern-app:latest
+          docker tag 8byte-intern-app dityakp/8byte-intern-app:${{ github.sha }}
+          docker push dityakp/8byte-intern-app:latest
+          docker push dityakp/8byte-intern-app:${{ github.sha }}
